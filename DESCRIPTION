@@ -25,4 +25,5 @@ Imports:
     denoiseR
 Depends:
     R (>= 3.6.0)
-    
+URL: https://github.com/peterwmacd/multiness
+BugReports: https://github.com/peterwmacd/multiness/issues
