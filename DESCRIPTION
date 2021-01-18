@@ -1,0 +1,28 @@
+Package: multiness
+Title: MULTIplex NEtworks with Shared Structure
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Peter W.",
+           family = "MacDonald",
+           role = c("aut", "cre"),
+           email = "pwmacdon@umich.edu",
+           comment = c(ORCID = "0000-0001-7024-7242"))
+Description: Model fitting and simulation for Gaussian and logistic inner 
+    product MultiNeSS models for multiplex networks. The package implements 
+    a convex fitting algorithm with fully adaptive parameter tuning, 
+    including options for edge cross-validation. For more details see 
+    MacDonald et al. (2020+).  
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    glmnet (>= 4.0.2),
+    Matrix (>= 1.1.0),
+    RSpectra (>= 0.16.0),
+    rstiefel,
+    denoiseR
+Depends:
+    R (>= 3.6.0)
+    
