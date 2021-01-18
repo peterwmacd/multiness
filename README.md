@@ -36,9 +36,9 @@ data(agri_trade)
 A <- log(1+agri_trade)
 
 # model fit
-fit <- multiness_fit(A=A,model="gaussian",self_loops=FALSE,
+fit <- multiness_fit(A,model="gaussian",self_loops=FALSE,
                      tuning="adaptive",tuning_opts=list(penalty_const=3),
-                     optim_opts=list(max_rank=100))
+                     optim_opts=list(max_rank=100,return_posns=TRUE))
 
 # inspect fitted latent space dimensions
 # common latent space
@@ -47,4 +47,15 @@ fit$d1
 # individual latent spaces
 fit$d2
 #>  [1] 3 3 4 1 2 4 3 4 8 7 3 6 3
+
+# plot first two common latent dimensions
+plot(fit$V_hat[,1:2],main="Common latent dimensions",
+     xlab="v1",ylab="v2",xlim=c(0,4))
+# label a subset of the points
+countries <- dimnames(A)[[1]]
+do_label <- c(4,5,8,10,11,14,17,19,20,24,25,28,33,34,35,37,39,54,61,75)
+text(fit$V_hat[do_label,1],fit$V_hat[do_label,2],
+     labels=countries[do_label],pos=4,cex=.8)
 ```
+
+<img src="man/figures/README-example-1.png" width="100%" />
