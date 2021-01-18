@@ -7,15 +7,16 @@
 
 <!-- badges: end -->
 
-implements model fitting and simulation for Gaussian and logistic inner
-product MultiNeSS models for multiplex networks. The package uses a
-convex fitting algorithm with fully adaptive parameter tuning, including
-options for edge cross-validation. For more details see [MacDonald et
-al., (2020)](https://arxiv.org/abs/2012.14409).
+The R package “multiness” implements model fitting and simulation for
+Gaussian and logistic inner product MultiNeSS models for multiplex
+networks. The package uses a convex fitting algorithm with fully
+adaptive parameter tuning, including options for edge cross-validation.
+For more details see [MacDonald et al.,
+(2020)](https://arxiv.org/abs/2012.14409).
 
 ## Installation
 
-You can install the development version of  from GitHub using
+You can install the development version of “multiness” from GitHub using
 
 ``` r
 devtools::install_github("peterwmacd/multiness")
@@ -23,9 +24,10 @@ devtools::install_github("peterwmacd/multiness")
 
 ## Example
 
-includes an example agricultural trade dataset which is studied in
-[MacDonald et al., (2020)](https://arxiv.org/abs/2012.14409). It is easy
-to import and to fit a Gaussian MultiNeSS model with adaptive tuning.
+“multiness” includes an example multiplex network of agricultural trade
+which is studied in [MacDonald et al.,
+(2020)](https://arxiv.org/abs/2012.14409). It is easy to import and to
+fit a Gaussian MultiNeSS model with adaptive tuning.
 
 ``` r
 library(multiness)
