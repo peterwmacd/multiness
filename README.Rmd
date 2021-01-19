@@ -40,6 +40,8 @@ library(multiness)
 
 # import data
 data(agri_trade)
+dim(agri_trade)
+
 # log transformation for edge weights
 A <- log(1+agri_trade)
 
