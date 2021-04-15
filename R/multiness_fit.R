@@ -517,17 +517,17 @@ multiness_fit <- function(
                 alpha=alpha_tuned))
   }
   else{
-    V_hat <- ase(fit$F_hat,fit$F_rank)
+    V_hat <- ase(refit$F_hat,refit$F_rank)
     U_hat <- lapply(1:m,
                     function(kk){
-                      ase(fit$G_hat[[kk]],fit$G_rank[kk])
+                      ase(refit$G_hat[[kk]],refit$G_rank[kk])
                     })
     return(list(V_hat=V_hat,
                 U_hat=U_hat,
-                d1=fit$F_rank,
-                d2=fit$G_rank,
-                K=fit$K,
-                convergence=fit$convergence,
+                d1=refit$F_rank,
+                d2=refit$G_rank,
+                K=refit$K,
+                convergence=refit$convergence,
                 lambda=lambda_vec_tuned,
                 alpha=alpha_tuned))
   }
