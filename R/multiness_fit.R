@@ -418,22 +418,22 @@ multiness_fit <- function(
         lambda_cv_current <- tuning_opts$penalty_const_vec[jj]*lambda_propto
         # fit model
         fit_cv <- prox_gd_memeff(A=A,
-                                lambda=lambda_cv_current,
-                                alpha=alpha_tuned,
-                                link=linkl,
-                                eta=optim_opts$eta,
-                                init=optim_opts$init,
-                                V_init=optim_opts$V_init,U_init=optim_opts$U_init,
-                                pos=optim_opts$positive,
-                                block=T,soft=T,
-                                hollow=!self_loops,
-                                misspattern = MP_cv,
-                                eps=optim_opts$eps,
-                                max_rank=optim_opts$max_rank,init_rank=optim_opts$init_rank,
-                                eig_maxitr=optim_opts$eig_maxitr,
-                                verbose=FALSE,
-                                check_obj=optim_opts$check_obj,
-                                eig_prec=optim_opts$eig_prec)
+                                 lambda=lambda_cv_current,
+                                 alpha=alpha_tuned,
+                                 link=linkl,
+                                 eta=optim_opts$eta,
+                                 init=optim_opts$init,
+                                 V_init=optim_opts$V_init,U_init=optim_opts$U_init,
+                                 pos=optim_opts$positive,
+                                 block=T,soft=T,
+                                 hollow=!self_loops,
+                                 misspattern = MP_cv,
+                                 eps=optim_opts$eps,
+                                 max_rank=optim_opts$max_rank,init_rank=optim_opts$init_rank,
+                                 eig_maxitr=optim_opts$eig_maxitr,
+                                 verbose=FALSE,
+                                 check_obj=optim_opts$check_obj,
+                                 eig_prec=optim_opts$eig_prec)
         # refit if applicable and evaluate error
         if(tuning_opts$refit_cv){
           # refit
@@ -475,92 +475,61 @@ multiness_fit <- function(
 
   # fit the final model (first stage)
   fit <- prox_gd_memeff(A=A,
-                          lambda=lambda_vec_tuned,
-                          alpha=alpha_tuned,
-                          link=linkl,
-                          eta=optim_opts$eta,
-                          init=optim_opts$init,
-                          V_init=optim_opts$V_init,U_init=optim_opts$U_init,
-                          pos=optim_opts$positive,
-                          block=T,soft=T,
-                          hollow=!self_loops,
-                          misspattern = NULL,
-                          eps=optim_opts$eps,
-                          max_rank=optim_opts$max_rank,init_rank=optim_opts$init_rank,
-                          K_max=optim_opts$K_max,
-                          eig_maxitr=optim_opts$eig_maxitr,
-                          verbose=optim_opts$verbose,
-                          check_obj=optim_opts$check_obj,
-                          eig_prec=optim_opts$eig_prec)
+                        lambda=lambda_vec_tuned,
+                        alpha=alpha_tuned,
+                        link=linkl,
+                        eta=optim_opts$eta,
+                        init=optim_opts$init,
+                        V_init=optim_opts$V_init,U_init=optim_opts$U_init,
+                        pos=optim_opts$positive,
+                        block=T,soft=T,
+                        hollow=!self_loops,
+                        misspattern = NULL,
+                        eps=optim_opts$eps,
+                        max_rank=optim_opts$max_rank,init_rank=optim_opts$init_rank,
+                        K_max=optim_opts$K_max,
+                        eig_maxitr=optim_opts$eig_maxitr,
+                        verbose=optim_opts$verbose,
+                        check_obj=optim_opts$check_obj,
+                        eig_prec=optim_opts$eig_prec)
   # if required, refit the model (second stage)
   if(refit){
-    # refit if applicable
     refit <- prox_gd_refit(A=A,
                            fit=fit,
                            family=family_str,
                            misspattern=NULL,
                            hollow=!self_loops,
-                           return_factors=optim_opts$return_posns,
+                           return_factors=FALSE,
                            ignore_neg=FALSE)
-    if(optim_opts$return_posns & !is.null(refit$V_hat)){
-      return(list(V_hat=refit$V_hat,
-                  U_hat=refit$U_hat,
-                  d1=refit$F_rank,
-                  d2=refit$G_rank,
-                  K=refit$K,
-                  convergence=refit$convergence,
-                  lambda=lambda_vec_tuned,
-                  alpha=alpha_tuned))
-    }
-    else{
-      return(list(F_hat=refit$F_hat,
-                  G_hat=refit$G_hat,
-                  d1=refit$F_rank,
-                  d2=refit$G_rank,
-                  K=refit$K,
-                  convergence=refit$convergence,
-                  lambda=lambda_vec_tuned,
-                  alpha=alpha_tuned))
-    }
   }
   else{
-    if(!optim_opts$return_posns){
-      return(list(F_hat=fit$F_hat,
-                  G_hat=fit$G_hat,
-                  d1=fit$F_rank,
-                  d2=fit$G_rank,
-                  K=fit$K,
-                  convergence=fit$convergence,
-                  lambda=lambda_vec_tuned,
-                  alpha=alpha_tuned))
-    }
-    else{
-      if(fit$ase_ok){
-        V_hat <- ase(fit$F_hat,fit$F_rank)
-        U_hat <- lapply(1:m,
-                        function(kk){
-                          ase(fit$G_hat[[kk]],fit$G_rank[kk])
-                        })
-        return(list(V_hat=V_hat,
-                    U_hat=U_hat,
-                    d1=fit$F_rank,
-                    d2=fit$G_rank,
-                    K=fit$K,
-                    convergence=fit$convergence,
-                    lambda=lambda_vec_tuned,
-                    alpha=alpha_tuned))
-      }
-      else{
-        warning("Can't factorize result, returning matrices instead")
-        return(list(F_hat=fit$F_hat,
-                    G_hat=fit$G_hat,
-                    d1=fit$F_rank,
-                    d2=fit$G_rank,
-                    K=fit$K,
-                    convergence=fit$convergence,
-                    lambda=lambda_vec_tuned,
-                    alpha=alpha_tuned))
-      }
-    }
+    refit <- fit
+  }
+  # return results, factorize if required
+  if(!optim_opts$return_posns){
+    return(list(F_hat=refit$F_hat,
+                G_hat=refit$G_hat,
+                d1=refit$F_rank,
+                d2=refit$G_rank,
+                K=refit$K,
+                convergence=refit$convergence,
+                lambda=lambda_vec_tuned,
+                alpha=alpha_tuned))
+  }
+  else{
+    V_hat <- ase(fit$F_hat,fit$F_rank)
+    U_hat <- lapply(1:m,
+                    function(kk){
+                      ase(fit$G_hat[[kk]],fit$G_rank[kk])
+                    })
+    return(list(V_hat=V_hat,
+                U_hat=U_hat,
+                d1=fit$F_rank,
+                d2=fit$G_rank,
+                K=fit$K,
+                convergence=fit$convergence,
+                lambda=lambda_vec_tuned,
+                alpha=alpha_tuned))
   }
 }
+

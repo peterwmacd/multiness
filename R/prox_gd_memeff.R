@@ -126,7 +126,8 @@ prox_gd_memeff <- function(A,lambda,alpha,
               sapply(U_new,function(x){min(x$vals) < -eig_prec}))
   # check if ASE can be run on the results
   ase_ok <- !any(pos_ev)
-
+  # *ase_ok is no longer used, from before ASE could
+  # handle negative eigenvalues
 
   G_hat <- lapply(U_new,einfo_to_mat,eig_prec=eig_prec)
   return(list(F_hat=einfo_to_mat(V_new,eig_prec=eig_prec),G_hat=G_hat,
