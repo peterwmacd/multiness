@@ -7,16 +7,23 @@
 ase(M,d)
 }
 \arguments{
-\item{M}{A symmetric and positive semi-definite matrix.}
+\item{M}{A symmetric matrix.}
 
 \item{d}{A non-negative integer embedding dimension.}
 }
 \value{
-An \eqn{n \times d} matrix \eqn{X} which factorizes
-\eqn{M} as \eqn{M = XX^{\intercal}}. If \eqn{d=0}, \code{ase} returns
-an \eqn{n \times 1} matrix of zeros.
+An \eqn{n \times d} matrix \eqn{X}, defined as \eqn{U |S|^{1/2}}
+where \eqn{S} is a diagonal matrix of the \eqn{d} leading (in absolute value)
+eigenvalues of \eqn{M}, and \eqn{U} is a matrix of the corresponding
+eigenvectors.
+
+\eqn{X} has an additional attribute \code{"signs"} which gives the sign of
+the eigenvalue corresponding to each column.
+
+If \eqn{d=0}, \code{ase} returns an \eqn{n \times 1}
+matrix of zeros.
 }
 \description{
-\code{ase} calculates the \eqn{d}-dimensional adjacency spectral embedding of a symmetric,
-positive semi-definite \eqn{n \times n} matrix \eqn{M}.
+\code{ase} calculates the \eqn{d}-dimensional adjacency spectral embedding of a symmetric
+\eqn{n \times n} matrix \eqn{M}.
 }

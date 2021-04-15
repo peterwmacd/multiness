@@ -39,6 +39,8 @@
 #' @param lp_opts A list, containing additional optional arguments controlling the
 #' properties of the latent positions:
 #' \describe{
+#'     \item{density_shift}{A positive scalar, for the logistic model only, a shift
+#'     subtracted from the log-odds of each edge to control overall edge density. Defaults to \code{0}.}
 #'     \item{dependence_type}{A string, valid choices are \code{'all'} or
 #'     \code{'U_only'} for the Gaussian model; \code{'all'} for the logistic
 #'     model. If \code{'all'}, \eqn{V} and \eqn{U_k}; and \eqn{U_k} and \eqn{U_l}
@@ -120,6 +122,10 @@ multiness_sim <- function(
   if(is.null(lp_opts$gamma)){
     lp_opts$gamma <- 1
   }
+  # density_param (for logit model only)
+  if(is.null(lp_opts$density_shift)){
+    lp_opts$density_shift <- 0
+  }
   # rho
   if(is.null(lp_opts$rho)){
     lp_opts$rho <- 0
@@ -156,6 +162,7 @@ multiness_sim <- function(
                                    m=m,
                                    d1=d1,
                                    d2=d2,
+                                   density_shift=lp_opts$density_shift,
                                    gamma=lp_opts$gamma,
                                    rho=lp_opts$rho,
                                    hollow=hollow_fun)

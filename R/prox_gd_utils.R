@@ -4,12 +4,12 @@
 # F update for step size is prescaled by m
 V_update_f <- function(V_old,U_old,A_bar,link,
                        eta,lambda,
-                       max_rank,
+                       max_rank,pos=F,
                        soft=T,eig_maxitr,
                        hollow=T,misspattern=NULL){
   m <- length(U_old)
   VV <- einfo_to_mat(V_old)
-  if(hollow){ 
+  if(hollow){
     thresh_mat <- VV + eta*hollowize(A_bar - (1/m)*sum_einfo_list(U_old,link[[1]],VV,misspattern))
   }
   else{
@@ -18,6 +18,7 @@ V_update_f <- function(V_old,U_old,A_bar,link,
   V_new <- sv_thresh_f(thresh_mat,
                        thresh = (eta/m)*lambda,
                        max_rank = max_rank,
+                       pos=pos,
                        soft=soft,
                        eig_maxitr = eig_maxitr)
   return(V_new)
@@ -25,7 +26,8 @@ V_update_f <- function(V_old,U_old,A_bar,link,
 
 U_update_f <- function(U_old,V_old,A,link,
                        eta,lambda,
-                       max_rank,soft=T,eig_maxitr,
+                       max_rank,pos=F,
+                       soft=T,eig_maxitr,
                        hollow=T,misspattern=NULL){
   m <- dim(A)[3]
   VV <- einfo_to_mat(V_old)
@@ -50,6 +52,7 @@ U_update_f <- function(U_old,V_old,A,link,
     return(sv_thresh_f(thresh_mat,
                        thresh = eta*lambda[ii],
                        max_rank=max_rank,
+                       pos=pos,
                        soft=soft,
                        eig_maxitr=eig_maxitr))
   }

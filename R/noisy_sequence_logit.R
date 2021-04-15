@@ -2,7 +2,8 @@
 # internal to multiness_sim in the logistic case
 
 noisy_sequence_logit <- function(n,m,d1,d2,
-                                 gamma,rho,hollow=identity){
+                                 density_shift,gamma,rho,
+                                 hollow=identity){
   # generate common low rank structure
   if(d1 > 0){
     V <- matrix(stats::rnorm(n*d1,sd=gamma),n,d1)
@@ -32,7 +33,7 @@ noisy_sequence_logit <- function(n,m,d1,d2,
   P <- A <- array(NA,c(n,n,m))
   for(ii in 1:m){
     # calculate P and E
-    P.temp <- expit(tcrossprod(cbind(V,U[,,ii])))
+    P.temp <- expit(tcrossprod(cbind(V,U[,,ii])) - density_shift)
     P[,,ii] <- hollow(P.temp)
     P.tri <- c(P.temp[lower.tri(P.temp,diag=T)])
     A.temp <- matrix(NA,n,n)

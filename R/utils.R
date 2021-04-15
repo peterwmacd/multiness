@@ -37,7 +37,7 @@ logit <- function(x,tol=1e-6){ # tolerance parameter to avoid NaN's
 # restore a matrix from eig information
 einfo_to_mat <- function(einfo,eig_prec=0){
   eval <- einfo$vals*(abs(einfo$vals) > eig_prec)
-  return((einfo$vecs %*% (eval *t(einfo$vecs))))
+  return((einfo$vecs %*% (eval * t(einfo$vecs))))
 }
 
 # make an nxn matrix 'hollow' (zero diagonal)
@@ -51,7 +51,12 @@ sum_einfo_list <- function(lof,link,offset,misspattern=NULL){
   m <- length(lof)
   n <- dim(offset)[1]
   if(m==1){
-    return(einfo_to_mat(lof[[1]])*misspattern[,,1])
+    if(is.null(misspattern)){
+      return(einfo_to_mat(lof[[1]]))
+    }
+    else{
+      return(einfo_to_mat(lof[[1]])*misspattern[,,1])
+    }
   }
   else{
     if(is.null(misspattern)){
@@ -72,18 +77,26 @@ sum_einfo_list <- function(lof,link,offset,misspattern=NULL){
 
 #' Adjacency Spectral Embedding (ASE)
 #'
-#' \code{ase} calculates the \eqn{d}-dimensional adjacency spectral embedding of a symmetric,
-#' positive semi-definite \eqn{n \times n} matrix \eqn{M}.
+#' \code{ase} calculates the \eqn{d}-dimensional adjacency spectral embedding of a symmetric
+#' \eqn{n \times n} matrix \eqn{M}.
 #'
 #' @usage
 #' ase(M,d)
 #'
-#' @param M A symmetric and positive semi-definite matrix.
+#' @param M A symmetric matrix.
 #' @param d A non-negative integer embedding dimension.
 #'
-#' @return An \eqn{n \times d} matrix \eqn{X} which factorizes
-#' \eqn{M} as \eqn{M = XX^{\intercal}}. If \eqn{d=0}, \code{ase} returns
-#' an \eqn{n \times 1} matrix of zeros.
+#' @return An \eqn{n \times d} matrix \eqn{X}, defined as \eqn{U |S|^{1/2}}
+#' where \eqn{S} is a diagonal matrix of the \eqn{d} leading (in absolute value)
+#' eigenvalues of \eqn{M}, and \eqn{U} is a matrix of the corresponding
+#' eigenvectors.
+#'
+#' \eqn{X} has an additional attribute \code{"signs"} which gives the sign of
+#' the eigenvalue corresponding to each column.
+#'
+#' If \eqn{d=0}, \code{ase} returns an \eqn{n \times 1}
+#' matrix of zeros.
+#'
 #'
 #' @export
 ase <- function(M,d){
@@ -91,16 +104,19 @@ ase <- function(M,d){
     X.hat <- matrix(0,nrow(M),1)
   }
   else{
-    temp <- RSpectra::eigs_sym(M,d,which="LA")
+    temp <- RSpectra::eigs_sym(M,d,which="LM")
+    perm <- order(abs(temp$values),decreasing=TRUE)
     if(d>1){
-      X.hat <- temp$vectors %*% diag(sqrt(temp$values))
+      X.hat <- temp$vectors[,perm] %*% diag(sqrt(abs(temp$values[perm])))
     }
     else{
-      X.hat <- temp$vectors*sqrt(temp$values)
+      X.hat <- temp$vectors[,perm]*sqrt(abs(temp$values[perm]))
     }
   }
+  attr(X.hat,'signs') <- sign(temp$values[perm])
   return(X.hat)
 }
+
 
 # evaluate the nuclear norm of a matrix (with a max rank)
 nuclear <- function(M,max_rank){

@@ -122,7 +122,9 @@
 #'     descent. Defaults to \code{100}.}
 #'     \item{max_rank}{A positive integer, maximum rank for internal eigenvalue
 #'     solver. Defaults to \code{sqrt(n)}.}
-#'     \item{return_posns}{A Boolean, if \code{TRUE}, attempts to return estimates
+#'     \item{positive}{A Boolean, if \code{TRUE}, singular value thresholding only retains
+#'     positive eigenvalues. Defaults to \code{FALSE}.}
+#'     \item{return_posns}{A Boolean, if \code{TRUE}, returns estimates
 #'     of the latent positions based on ASE. Defaults to \code{FALSE}.}
 #'     \item{verbose}{A Boolean, if \code{TRUE}, console output will provide
 #'     updates on the progress of proximal gradient descent. Defaults to
@@ -134,16 +136,16 @@
 #' output:
 #' \item{F_hat}{An \eqn{n \times n} matrix estimating the common part of the expected
 #' adjacency matrix, \eqn{F = VV^{\intercal}}. If \code{optim_opts$return_posns}
-#' is \code{TRUE} and all ASE's exist, this is not returned.}
+#' is \code{TRUE}, this is not returned.}
 #' \item{G_hat}{A list of length \eqn{m}, the collection of \eqn{n \times n} matrices
 #' estimating the individual part of each adjacency matrix, \eqn{G_k = U_kU_k^{\intercal}}.
 #' If \code{optim_opts$return_posns}
-#' is \code{TRUE} and all ASE's exist, this is not returned.}
-#' \item{V_hat}{A matrix estimating the common latent positions. Returned if \code{optim_opts$return_posns} is \code{TRUE} and all
-#' ASE's exist.}
+#' is \code{TRUE}, this is not returned.}
+#' \item{V_hat}{A matrix estimating the common latent positions.
+#' Returned if \code{optim_opts$return_posns} is \code{TRUE}.}
 #' \item{U_hat}{A list of length \eqn{m}, the collection of matrices
-#' estimating the individual latent positions. Returned if \code{optim_opts$return_posns} is \code{TRUE} and all
-#' ASE's exist.}
+#' estimating the individual latent positions.
+#' Returned if \code{optim_opts$return_posns} is \code{TRUE}.}
 #' \item{d1}{A non-negative integer, the estimated common dimension of the
 #' latent space.}
 #' \item{d2}{An integer vector of length \eqn{m}, the estimated individual
@@ -251,7 +253,6 @@ multiness_fit <- function(
   # init (and V_init/U_init for fix init, init_rank for svd)
   if(is.null(optim_opts$init)){
     optim_opts$init <- "zero"
-    #optim_opts$init_rank <- round(sqrt(n))
   }
   else{
     if(optim_opts$init=="svd"){
@@ -272,6 +273,10 @@ multiness_fit <- function(
   # max_rank
   if(is.null(optim_opts$max_rank)){
     optim_opts$max_rank <- round(sqrt(n))
+  }
+  # positive
+  if(is.null(optim_opts$positive)){
+    optim_opts$positive <- FALSE
   }
   # return_posns
   if(is.null(optim_opts$return_posns)){
@@ -295,9 +300,9 @@ multiness_fit <- function(
   }
 
   # set default tuning options and tune the different methods
-  # each of these chunks should define tuned parameters:
-  # - 'lambda_vec_tuned'
-  # - 'alpha_tuned'
+  # each of these chunks define tuned parameters:
+  # 'lambda_vec_tuned'
+  # 'alpha_tuned'
 
   # FIXED tuning
   if(tuning=="fixed"){
@@ -419,6 +424,7 @@ multiness_fit <- function(
                                 eta=optim_opts$eta,
                                 init=optim_opts$init,
                                 V_init=optim_opts$V_init,U_init=optim_opts$U_init,
+                                pos=optim_opts$positive,
                                 block=T,soft=T,
                                 hollow=!self_loops,
                                 misspattern = MP_cv,
@@ -475,6 +481,7 @@ multiness_fit <- function(
                           eta=optim_opts$eta,
                           init=optim_opts$init,
                           V_init=optim_opts$V_init,U_init=optim_opts$U_init,
+                          pos=optim_opts$positive,
                           block=T,soft=T,
                           hollow=!self_loops,
                           misspattern = NULL,

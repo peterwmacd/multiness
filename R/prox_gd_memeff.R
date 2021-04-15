@@ -8,7 +8,7 @@
 prox_gd_memeff <- function(A,lambda,alpha,
                              link=list(identity,identity),
                              eta,init='svd',V_init=NULL,U_init=NULL,
-                             block=T,soft=T,hollow=T,misspattern=NULL,
+                             pos=F,block=T,soft=T,hollow=T,misspattern=NULL,
                              eps=1e-4,max_rank=10,K_max=50,eig_maxitr=1000,init_rank=max_rank,
                              verbose=FALSE,check_obj=FALSE,eig_prec=1e-2){
   # dimensions
@@ -26,8 +26,8 @@ prox_gd_memeff <- function(A,lambda,alpha,
   # initialization method
   # initialize with a low-rank approximation
   if(init=='svd'){
-    V_old <- rank_thresh_f(link[[2]](rank_thresh(A_bar,max_rank,eig_maxitr)),init_rank,eig_maxitr)
-    U_old <- lapply(1:m,function(ii){rank_thresh_f(link[[2]](rank_thresh(A[,,ii] - einfo_to_mat(V_old),max_rank,eig_maxitr)),init_rank,eig_maxitr)})
+    V_old <- rank_thresh_f(link[[2]](rank_thresh(A_bar,max_rank,pos,eig_maxitr)),init_rank,pos,eig_maxitr)
+    U_old <- lapply(1:m,function(ii){rank_thresh_f(link[[2]](rank_thresh(A[,,ii] - einfo_to_mat(V_old),max_rank,pos,eig_maxitr)),init_rank,pos,eig_maxitr)})
   }
   # initialize completely at random
   # if(init=='random'){
@@ -53,18 +53,18 @@ prox_gd_memeff <- function(A,lambda,alpha,
     # update V
     V_new <- V_update_f(V_old,U_old,A_bar,link,
                       eta_curr,la,
-                      max_rank,soft,eig_maxitr,hollow,misspattern)
+                      max_rank,pos,soft,eig_maxitr,hollow,misspattern)
     # use V_old or V_new depending on block updating
     # update U
     if(block){
       U_new <- U_update_f(U_old,V_new,A,link,
                           eta_curr,lambda,
-                          max_rank,soft,eig_maxitr,hollow,misspattern)
+                          max_rank,pos,soft,eig_maxitr,hollow,misspattern)
     }
     else{
       U_new <- U_update_f(U_old,V_old,A,link,
                           eta_curr,lambda,
-                          max_rank,soft,eig_maxitr,hollow,misspattern)
+                          max_rank,pos,soft,eig_maxitr,hollow,misspattern)
     }
     # check convergence
     if(check_obj){
@@ -120,14 +120,14 @@ prox_gd_memeff <- function(A,lambda,alpha,
   # set a convergence flag like in stats::optim
   # did the loop exit with convergence
   convergence <- as.integer(!conv)
-  
+
   # trim very small eigenvalues (numerical precision)
-  pos_ev <- c(min(V_new$vals) < -eig_prec, 
+  pos_ev <- c(min(V_new$vals) < -eig_prec,
               sapply(U_new,function(x){min(x$vals) < -eig_prec}))
   # check if ASE can be run on the results
   ase_ok <- !any(pos_ev)
-  
-  
+
+
   G_hat <- lapply(U_new,einfo_to_mat,eig_prec=eig_prec)
   return(list(F_hat=einfo_to_mat(V_new,eig_prec=eig_prec),G_hat=G_hat,
               F_rank=sum(abs(V_new$vals)>eig_prec),G_rank=sapply(U_new,function(x){sum(abs(x$vals)>eig_prec)}),
