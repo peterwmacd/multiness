@@ -101,7 +101,9 @@ Defaults to \code{'zero'}.}
 descent. Defaults to \code{100}.}
 \item{max_rank}{A positive integer, maximum rank for internal eigenvalue
 solver. Defaults to \code{sqrt(n)}.}
-\item{return_posns}{A Boolean, if \code{TRUE}, attempts to return estimates
+\item{positive}{A Boolean, if \code{TRUE}, singular value thresholding only retains
+positive eigenvalues. Defaults to \code{FALSE}.}
+\item{return_posns}{A Boolean, if \code{TRUE}, returns estimates
 of the latent positions based on ASE. Defaults to \code{FALSE}.}
 \item{verbose}{A Boolean, if \code{TRUE}, console output will provide
 updates on the progress of proximal gradient descent. Defaults to
@@ -114,16 +116,16 @@ the common and individual latent spaces, and some additional optimization
 output:
 \item{F_hat}{An \eqn{n \times n} matrix estimating the common part of the expected
 adjacency matrix, \eqn{F = VV^{\intercal}}. If \code{optim_opts$return_posns}
-is \code{TRUE} and all ASE's exist, this is not returned.}
+is \code{TRUE}, this is not returned.}
 \item{G_hat}{A list of length \eqn{m}, the collection of \eqn{n \times n} matrices
 estimating the individual part of each adjacency matrix, \eqn{G_k = U_kU_k^{\intercal}}.
 If \code{optim_opts$return_posns}
-is \code{TRUE} and all ASE's exist, this is not returned.}
-\item{V_hat}{A matrix estimating the common latent positions. Returned if \code{optim_opts$return_posns} is \code{TRUE} and all
-ASE's exist.}
+is \code{TRUE}, this is not returned.}
+\item{V_hat}{A matrix estimating the common latent positions.
+Returned if \code{optim_opts$return_posns} is \code{TRUE}.}
 \item{U_hat}{A list of length \eqn{m}, the collection of matrices
-estimating the individual latent positions. Returned if \code{optim_opts$return_posns} is \code{TRUE} and all
-ASE's exist.}
+estimating the individual latent positions.
+Returned if \code{optim_opts$return_posns} is \code{TRUE}.}
 \item{d1}{A non-negative integer, the estimated common dimension of the
 latent space.}
 \item{d2}{An integer vector of length \eqn{m}, the estimated individual

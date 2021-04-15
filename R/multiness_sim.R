@@ -5,9 +5,9 @@
 #'
 #' The common and individual latent positions, \eqn{V} and \eqn{U_k}
 #' respectively, are generated as
-#' Gaussian random variables with standard deviation \code{lp_opts$gamma}, and
+#' Gaussian random variables with standard deviation \code{opts$gamma}, and
 #' dependence controlled by the optional
-#' arguments \code{lp_opts$dependence_type} and \code{lp_opts$rho}.
+#' arguments \code{opts$dependence_type} and \code{opts$rho}.
 #'
 #' Under the Gaussian model, the \eqn{n \times n} adjacency matrix for layer \eqn{k=1,...,m}
 #' has independent Gaussian entries with standard deviation \code{sigma} and
@@ -22,7 +22,7 @@
 #' an option to set the diagonal entries of the adjacency matrices to zero.
 #'
 #' @usage
-#' multiness_sim(n,m,d1,d2,model,sigma,self_loops,lp_opts)
+#' multiness_sim(n,m,d1,d2,model,sigma,self_loops,opts)
 #'
 #' @param n A positive integer, the number of nodes.
 #' @param m A positive integer, the number of layers.
@@ -36,8 +36,7 @@
 #' model. Defaults to \code{1}.
 #' @param self_loops A Boolean, if \code{FALSE}, all diagonal entries are set
 #' to zero. Defaults to \code{TRUE}.
-#' @param lp_opts A list, containing additional optional arguments controlling the
-#' properties of the latent positions:
+#' @param opts A list, containing additional optional arguments:
 #' \describe{
 #'     \item{density_shift}{A positive scalar, for the logistic model only, a shift
 #'     subtracted from the log-odds of each edge to control overall edge density. Defaults to \code{0}.}
@@ -51,6 +50,10 @@
 #'     Defaults to \code{'all'}.}
 #'     \item{gamma}{A positive scalar, the standard deviation of the entries of
 #'     the latent position matrices \eqn{V} and \eqn{U_k}. Defaults to \code{1}.}
+#'     \item{return_density}{A Boolean, if \code{TRUE} and \code{model='logistic'}, the function will return an array containing
+#'     the overall edge density. Defaults to \code{FALSE}.}
+#'     \item{return_P}{A Boolean, if \code{TRUE}, the function will return an array containing
+#'     the expected adjacency matrices. Defaults to \code{FALSE}.}
 #'     \item{rho}{A positive scalar in the interval (-1,1), controls the expected canonical
 #'     correlation between latent position matrices (see \code{dependence_type}).
 #'     Defaults to \code{0}.}
@@ -66,6 +69,9 @@
 #' latent positions. If \code{d1=0}, returns \code{NULL}.}
 #' \item{U}{An array of dimension \eqn{n \times d2 \times m}, the realized
 #' individual latent positions. If \code{d2=0}, returns \code{NULL}.}
+#' \item{P}{If specified, an array of dimension \eqn{n \times n \times m}, the expected
+#' multiplex network.}
+#' \item{density}{If specified and \code{model='logistic'}, the overall edge density.}
 #'
 #' @examples
 #' # gaussian model, uncorrelated latent positions
@@ -76,7 +82,7 @@
 #' data2 <- multiness_sim(n=100,m=4,d1=2,d2=2,
 #'                        model="logistic",
 #'                        self_loops=FALSE,
-#'                        lp_opts=list(dependence_type="all",rho=.3))
+#'                        opts=list(dependence_type="all",rho=.3))
 #'
 #' @export
 multiness_sim <- function(
@@ -87,7 +93,7 @@ multiness_sim <- function(
   model='gaussian', # either gaussian or logistic
   sigma=1, # either a scalar or a length m vector, unused in logit model
   self_loops=TRUE, # boolean (not a function!)
-  lp_opts=list() # a list including gamma (entry sd), dependence info
+  opts=list() # a list including gamma (entry sd), dependence info
 ){
   # PWM: fix this later
   # check all the dimensions are integer (can be coerced to integer?)
@@ -119,26 +125,34 @@ multiness_sim <- function(
 
   # set default latent position options
   # gamma
-  if(is.null(lp_opts$gamma)){
-    lp_opts$gamma <- 1
+  if(is.null(opts$gamma)){
+    opts$gamma <- 1
   }
   # density_param (for logit model only)
-  if(is.null(lp_opts$density_shift)){
-    lp_opts$density_shift <- 0
+  if(is.null(opts$density_shift)){
+    opts$density_shift <- 0
   }
   # rho
-  if(is.null(lp_opts$rho)){
-    lp_opts$rho <- 0
+  if(is.null(opts$rho)){
+    opts$rho <- 0
   }
   # dependence_type
-  if(is.null(lp_opts$dependence_type)){
+  if(is.null(opts$dependence_type)){
     # no dependence if the list entry is missing
-    lp_opts$dependence_type <- 'all'
+    opts$dependence_type <- 'all'
   }
   else{
-    if(!(lp_opts$dependence_type=='all' || lp_opts$dependence_type=='U_only')){
+    if(!(pts$dependence_type=='all' || opts$dependence_type=='U_only')){
       stop('Not a valid dependence type')
     }
+  }
+  # return_P
+  if(is.null(opts$return_P)){
+    opts$return_P <- FALSE
+  }
+  # return_density
+  if(is.null(opts$return_density)){
+    opts$return_density <- FALSE
   }
 
   # choose model and generate data from internal function
@@ -149,22 +163,22 @@ multiness_sim <- function(
                            d2=d2,
                            sigma=sigma_vec,
                            hollow=hollow_fun,
-                           gamma=lp_opts$gamma,
-                           rho=lp_opts$rho,
-                           dependence_type=lp_opts$dependence_type)
+                           gamma=opts$gamma,
+                           rho=opts$rho,
+                           dependence_type=opts$dependence_type)
   }
   else{
     if(model=='logistic'){
-      if(lp_opts$dependence_type == 'U_only'){
+      if(opts$dependence_type == 'U_only'){
         stop('Not a valid dependence type')
       }
       temp <- noisy_sequence_logit(n=n,
                                    m=m,
                                    d1=d1,
                                    d2=d2,
-                                   density_shift=lp_opts$density_shift,
-                                   gamma=lp_opts$gamma,
-                                   rho=lp_opts$rho,
+                                   density_shift=opts$density_shift,
+                                   gamma=opts$gamma,
+                                   rho=opts$rho,
                                    hollow=hollow_fun)
     }
     else{
@@ -173,5 +187,12 @@ multiness_sim <- function(
   }
 
   # collect output and return
-  return(list(A=temp$A,V=temp$V,U=temp$U))
+  out <- list(A=temp$A,V=temp$V,U=temp$U)
+  if(opts$return_P){
+    out$P <- temp$P
+  }
+  if(opts$return_density & model=='logistic'){
+    out$density <- mean(temp$A)
+  }
+  return(out)
 }

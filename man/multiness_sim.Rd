@@ -4,7 +4,7 @@
 \alias{multiness_sim}
 \title{Simulate from the MultiNeSS model}
 \usage{
-multiness_sim(n,m,d1,d2,model,sigma,self_loops,lp_opts)
+multiness_sim(n,m,d1,d2,model,sigma,self_loops,opts)
 }
 \arguments{
 \item{n}{A positive integer, the number of nodes.}
@@ -26,8 +26,7 @@ model. Defaults to \code{1}.}
 \item{self_loops}{A Boolean, if \code{FALSE}, all diagonal entries are set
 to zero. Defaults to \code{TRUE}.}
 
-\item{lp_opts}{A list, containing additional optional arguments controlling the
-properties of the latent positions:
+\item{opts}{A list, containing additional optional arguments:
 \describe{
 \item{density_shift}{A positive scalar, for the logistic model only, a shift
 subtracted from the log-odds of each edge to control overall edge density. Defaults to \code{0}.}
@@ -41,6 +40,10 @@ canonical correlation approximately equal to |\eqn{rho}| (see \code{rho}).
 Defaults to \code{'all'}.}
 \item{gamma}{A positive scalar, the standard deviation of the entries of
 the latent position matrices \eqn{V} and \eqn{U_k}. Defaults to \code{1}.}
+\item{return_density}{A Boolean, if \code{TRUE} and \code{model='logistic'}, the function will return an array containing
+the overall edge density. Defaults to \code{FALSE}.}
+\item{return_P}{A Boolean, if \code{TRUE}, the function will return an array containing
+the expected adjacency matrices. Defaults to \code{FALSE}.}
 \item{rho}{A positive scalar in the interval (-1,1), controls the expected canonical
 correlation between latent position matrices (see \code{dependence_type}).
 Defaults to \code{0}.}
@@ -55,6 +58,9 @@ multiplex network.}
 latent positions. If \code{d1=0}, returns \code{NULL}.}
 \item{U}{An array of dimension \eqn{n \times d2 \times m}, the realized
 individual latent positions. If \code{d2=0}, returns \code{NULL}.}
+\item{P}{If specified, an array of dimension \eqn{n \times n \times m}, the expected
+multiplex network.}
+\item{density}{If specified and \code{model='logistic'}, the overall edge density.}
 }
 \description{
 \code{multiness_sim} simulates a realization of the Gaussian
@@ -63,9 +69,9 @@ or logistic MultiNeSS model with Gaussian latent positions.
 \details{
 The common and individual latent positions, \eqn{V} and \eqn{U_k}
 respectively, are generated as
-Gaussian random variables with standard deviation \code{lp_opts$gamma}, and
+Gaussian random variables with standard deviation \code{opts$gamma}, and
 dependence controlled by the optional
-arguments \code{lp_opts$dependence_type} and \code{lp_opts$rho}.
+arguments \code{opts$dependence_type} and \code{opts$rho}.
 
 Under the Gaussian model, the \eqn{n \times n} adjacency matrix for layer \eqn{k=1,...,m}
 has independent Gaussian entries with standard deviation \code{sigma} and
@@ -88,6 +94,6 @@ data1 <- multiness_sim(n=100,m=4,d1=2,d2=2,
 data2 <- multiness_sim(n=100,m=4,d1=2,d2=2,
                        model="logistic",
                        self_loops=FALSE,
-                       lp_opts=list(dependence_type="all",rho=.3))
+                       opts=list(dependence_type="all",rho=.3))
 
 }
