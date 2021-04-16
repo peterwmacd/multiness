@@ -82,7 +82,7 @@
 #' data2 <- multiness_sim(n=100,m=4,d1=2,d2=2,
 #'                        model="logistic",
 #'                        self_loops=FALSE,
-#'                        opts=list(dependence_type="all",rho=.3))
+#'                        opts=list(dependence_type="all",rho=.3,return_density=TRUE))
 #'
 #' @export
 multiness_sim <- function(
