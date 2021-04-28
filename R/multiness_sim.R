@@ -142,7 +142,7 @@ multiness_sim <- function(
     opts$dependence_type <- 'all'
   }
   else{
-    if(!(pts$dependence_type=='all' || opts$dependence_type=='U_only')){
+    if(!(opts$dependence_type=='all' || opts$dependence_type=='U_only')){
       stop('Not a valid dependence type')
     }
   }
