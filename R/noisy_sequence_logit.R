@@ -17,13 +17,18 @@ noisy_sequence_logit <- function(n,m,d1,d2,
     # combine V and W to get correlated U
     U <- array(NA,dim(W))
     for(ii in 1:m){
-      B <- t(rstiefel::rustiefel(d1,min(d1,d2)))
-      w_scale <- rep(sqrt(1-rho^2),min(d1,d2))
-      if(d2>d1){
-        B <- rbind(B,matrix(0,d2-d1,d1))
-        w_scale <- c(w_scale,rep(1,d2-d1))
+      if(d1 > 0){
+        B <- t(rstiefel::rustiefel(d1,min(d1,d2)))
+        w_scale <- rep(sqrt(1-rho^2),min(d1,d2))
+        if(d2>d1){
+          B <- rbind(B,matrix(0,d2-d1,d1))
+          w_scale <- c(w_scale,rep(1,d2-d1))
+        }
+        U[,,ii] <- rho*(V %*% t(B)) + (W[,,ii] %*% diag(w_scale))
       }
-      U[,,ii] <- rho*(V %*% t(B)) + (W[,,ii] %*% diag(w_scale))
+      else{
+        U[,,ii] <- W[,,ii]
+      }
     }
   }
   else{
