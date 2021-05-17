@@ -27,7 +27,12 @@ prox_gd_memeff <- function(A,lambda,alpha,
   # initialize with a low-rank approximation
   if(init=='svd'){
     V_old <- rank_thresh_f(link[[2]](rank_thresh(A_bar,max_rank,pos,eig_maxitr)),init_rank,pos,eig_maxitr)
-    U_old <- lapply(1:m,function(ii){rank_thresh_f(link[[2]](rank_thresh(A[,,ii] - einfo_to_mat(V_old),max_rank,pos,eig_maxitr)),init_rank,pos,eig_maxitr)})
+    if(is.null(misspattern)){
+      U_old <- lapply(1:m,function(ii){rank_thresh_f(link[[2]](rank_thresh(A[,,ii] - einfo_to_mat(V_old),max_rank,pos,eig_maxitr)),init_rank,pos,eig_maxitr)})
+    }
+    else{
+      U_old <- lapply(1:m,function(ii){rank_thresh_f(link[[2]](rank_thresh(A[,,ii]*misspattern[,,ii] - einfo_to_mat(V_old),max_rank,pos,eig_maxitr)),init_rank,pos,eig_maxitr)})
+    }
   }
   # initialize completely at random
   # if(init=='random'){

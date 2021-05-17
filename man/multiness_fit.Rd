@@ -101,6 +101,9 @@ Defaults to \code{'zero'}.}
 descent. Defaults to \code{100}.}
 \item{max_rank}{A positive integer, maximum rank for internal eigenvalue
 solver. Defaults to \code{sqrt(n)}.}
+\item{missing_pattern}{An \eqn{n \times n \times m} Boolean array with \code{TRUE}
+for each observed entry and \code{FALSE} for missing entries. If unspecified, it
+is set to \code{!is.na(A)}.}
 \item{positive}{A Boolean, if \code{TRUE}, singular value thresholding only retains
 positive eigenvalues. Defaults to \code{FALSE}.}
 \item{return_posns}{A Boolean, if \code{TRUE}, returns estimates
@@ -175,7 +178,7 @@ can be provided in \code{tuning_opts}.
 }
 \examples{
 # gaussian model data
-data1<- multiness_sim(n=100,m=4,d1=2,d2=2,
+data1 <- multiness_sim(n=100,m=4,d1=2,d2=2,
                      model="gaussian")
 
 # multiness_fit with fixed tuning

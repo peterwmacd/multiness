@@ -122,6 +122,9 @@
 #'     descent. Defaults to \code{100}.}
 #'     \item{max_rank}{A positive integer, maximum rank for internal eigenvalue
 #'     solver. Defaults to \code{sqrt(n)}.}
+#'     \item{missing_pattern}{An \eqn{n \times n \times m} Boolean array with \code{TRUE}
+#'     for each observed entry and \code{FALSE} for missing entries. If unspecified, it
+#'     is set to \code{!is.na(A)}.}
 #'     \item{positive}{A Boolean, if \code{TRUE}, singular value thresholding only retains
 #'     positive eigenvalues. Defaults to \code{FALSE}.}
 #'     \item{return_posns}{A Boolean, if \code{TRUE}, returns estimates
@@ -162,7 +165,7 @@
 #'
 #' @examples
 #' # gaussian model data
-#' data1<- multiness_sim(n=100,m=4,d1=2,d2=2,
+#' data1 <- multiness_sim(n=100,m=4,d1=2,d2=2,
 #'                      model="gaussian")
 #'
 #' # multiness_fit with fixed tuning
@@ -273,6 +276,13 @@ multiness_fit <- function(
   # max_rank
   if(is.null(optim_opts$max_rank)){
     optim_opts$max_rank <- round(sqrt(n))
+  }
+  # missing_pattern
+  if(is.null(optim_opts$missing_pattern)){
+    # set to NAs if no pattern is specified
+    if(any(is.na(A))){
+      optim_opts$missing_pattern <- !is.na(A)
+    }
   }
   # positive
   if(is.null(optim_opts$positive)){
@@ -411,7 +421,15 @@ multiness_fit <- function(
     # loop through CV repeats
     for(ii in 1:tuning_opts$N_cv){
       # generate missingness pattern
-      MP_cv <- missing_array_sym(n,m,tuning_opts$p_cv)
+      # augment with existing missingness if applicable
+      if(is.null(optim_opts$missing_pattern)){
+        MP_cv <- missing_array_sym(n,m,tuning_opts$p_cv)
+      }
+      else{
+        MP_cv <- missing_array_sym(n,m,tuning_opts$p_cv,
+                                   subset=optim_opts$missing_pattern)
+      }
+      # augment with existing missingness if applicable
       # loop through lambdas
       for(jj in 1:LL){
         # set lambda
@@ -484,7 +502,7 @@ multiness_fit <- function(
                         pos=optim_opts$positive,
                         block=T,soft=T,
                         hollow=!self_loops,
-                        misspattern = NULL,
+                        misspattern = optim_opts$missing_pattern,
                         eps=optim_opts$eps,
                         max_rank=optim_opts$max_rank,init_rank=optim_opts$init_rank,
                         K_max=optim_opts$K_max,
@@ -497,7 +515,7 @@ multiness_fit <- function(
     refit <- prox_gd_refit(A=A,
                            fit=fit,
                            family=family_str,
-                           misspattern=NULL,
+                           misspattern=optim_opts$missing_pattern,
                            hollow=!self_loops,
                            return_factors=FALSE,
                            ignore_neg=FALSE)
