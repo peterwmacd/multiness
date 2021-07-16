@@ -21,7 +21,7 @@
 #' based on the adjacency spectral embedding (if such a factorization exists).
 #'
 #' Tuning parameters \eqn{\alpha} and \eqn{\lambda_k} in the nuclear norm penalty
-#' \deqn{\alpha ( \sum_k \lambda_k^2)/m ||F||_* + \sum_k \lambda_k ||G_k||_*}
+#' \deqn{\lambda ||F||_* + \sum_k \lambda \alpha_k ||G_k||_*}
 #' are either set by the
 #' user (\code{tuning='fixed'}), selected adaptively using the
 #' \code{\link[denoiseR:estim_sigma]{denoiseR}}
@@ -49,12 +49,12 @@
 #' If \code{tuning='fixed'}, \code{multiness_fit} will utilize the following
 #' arguments:
 #' \describe{
-#'     \item{alpha}{A positive scalar, the parameter \eqn{\alpha} in the
-#'     nuclear norm penalty, see Details. Defaults to \code{sqrt(m)}}
-#'     \item{lambda}{A positive scalar or numeric vector of length \code{m},
-#'     the \eqn{\lambda_k} parameters in the nuclear norm penalty, see Details.
-#'     If a scalar is provided all \eqn{\lambda_k} parameters are set to that
-#'     value. Defaults to \code{2.309 * sqrt(n)}.}
+#'     \item{lambda}{A positive scalar,
+#'     the \eqn{\lambda} parameter in the nuclear norm penalty, see Details.
+#'     Defaults to \code{2.309 * sqrt(n*m)}.}
+#'     \item{alpha}{A positive scalar or numeric vector of length \code{m}, the parameters \eqn{\alpha_k} in the
+#'     nuclear norm penalty, see Details. If a scalar is provided all \eqn{\lambda_k} parameters are set to that
+#'     value. Defaults to \code{1/sqrt(m)}}
 #' }
 #' If \code{tuning='adaptive'}, \code{multiness_fit} will utilize the following
 #' arguments:
@@ -62,13 +62,11 @@
 #'     \item{layer_wise}{A Boolean, if \code{TRUE}, the entry-wise variance
 #'     is estimated individually for each layer. Otherwise the estimates are
 #'     pooled. Defaults to \code{TRUE}.}
-#'     \item{penalty_const}{A positive scalar \eqn{C} which scales the \eqn{\lambda_k}
-#'     penalty parameters (see Details):
-#'     \deqn{\lambda_k = C \hat{\sigma}_k \sqrt n.}
+#'     \item{penalty_const}{A positive scalar \eqn{C} which scales the
+#'     penalty parameters (see Details).
 #'     Defaults to \code{2.309}.}
-#'     \item{penalty_const_alpha}{A positive scalar \eqn{c} which scales the \eqn{\alpha}
-#'     penalty parameter (see Details):
-#'     \deqn{\alpha = c \sqrt m.}
+#'     \item{penalty_const_lambda}{A positive scalar \eqn{c} which scales only the \eqn{\lambda}
+#'     penalty parameter (see Details).
 #'     Defaults to \code{1}.}
 #' }
 #' If \code{tuning='cv'}, \code{multiness_fit} will utilize the following
@@ -81,13 +79,11 @@
 #'     cross-validation performed for each parameter setting. Defaults to \code{3}.}
 #'     \item{p_cv}{A positive scalar in the interval (0,1), the proportion
 #'     of edge entries held out in edge cross-validation. Defaults to \eqn{0.1}.}
-#'     \item{penalty_const_alpha}{A positive scalar \eqn{c} which scales the \eqn{\alpha}
-#'     penalty parameter (see Details):
-#'     \deqn{\alpha = c \sqrt m.}
+#'     \item{penalty_const_lambda}{A positive scalar \eqn{c} which scales only the \eqn{\lambda}
+#'     penalty parameter (see Details).
 #'     Defaults to \code{1}.}
 #'     \item{penalty_const_vec}{A numeric vector with positive entries, the candidate
-#'     values of constant \eqn{C} to scale the \eqn{\lambda_k} penalty parameters (see Details):
-#'     \deqn{\lambda_k = C \hat{\sigma}_k \sqrt n.}
+#'     values of constant \eqn{C} to scale the penalty parameters (see Details).
 #'     An optimal constant is chosen by edge cross-validation. Defaults to
 #'     \code{c(1,1.5,...,3.5,4)}.}
 #'     \item{refit_cv}{A Boolean, if \code{TRUE}, a refitting step is
@@ -158,9 +154,9 @@
 #' \item{convergence}{An integer convergence code, \code{0} if proximal
 #' gradient descent converged in fewer than \code{optim_opts$K_max} iterations,
 #' \code{1} otherwise.}
-#' \item{lambda}{A numeric vector of length \eqn{m}, the tuned \eqn{\lambda}
-#' penalty parameters for each layer (see Details).}
-#' \item{alpha}{A positive scalar, the tuned \eqn{\alpha} penalty parameter
+#' \item{lambda}{A positive scalar, the tuned \eqn{\lambda}
+#' penalty parameter (see Details).}
+#' \item{alpha}{A numeric vector of length \eqn{m}, the tuned \eqn{\alpha} penalty parameters
 #' (see Details).}
 #'
 #' @examples
@@ -174,7 +170,7 @@
 #'                       self_loops=TRUE,
 #'                       refit=FALSE,
 #'                       tuning="fixed",
-#'                       tuning_opts=list(alpha=2,lambda=20),
+#'                       tuning_opts=list(lambda=40,alpha=1/2),
 #'                       optim_opts=list(max_rank=20,verbose=TRUE))
 #'
 #' # multiness_fit with adaptive tuning
@@ -320,30 +316,30 @@ multiness_fit <- function(
     # lambda PWM: note that this depends on the model choice
     if(is.null(tuning_opts$lambda)){
       if(model=="gaussian"){
-        tuning_opts$lambda <- (4/sqrt(3))*sqrt(n)
+        tuning_opts$lambda <- (4/sqrt(3))*sqrt(n)*sqrt(m)
       }
       else{
-        tuning_opts$lambda <- .5*(4/sqrt(3))*sqrt(n)
+        tuning_opts$lambda <- .5*(4/sqrt(3))*sqrt(n)*sqrt(m)
       }
     }
     # alpha
     if(is.null(tuning_opts$alpha)){
-      tuning_opts$alpha <- sqrt(m)
+      tuning_opts$alpha <- 1/sqrt(m)
     }
 
     # set parameters
-    if(!(length(tuning_opts$lambda)==m)){
-      if(length(tuning_opts$lambda)==1){
-        lambda_vec_tuned <- rep(tuning_opts$lambda,m)
+    if(!(length(tuning_opts$alpha)==m)){
+      if(length(tuning_opts$alpha)==1){
+        alpha_vec_tuned <- rep(tuning_opts$alpha,m)
       }
       else{
-        stop('lambda must be either a scalar or a vector of length m')
+        stop('alpha must be either a scalar or a vector of length m')
       }
     }
     else{
-      lambda_vec_tuned <- tuning_opts$lambda
+      alpha_vec_tuned <- tuning_opts$alpha
     }
-    alpha_tuned <- tuning_opts$alpha
+    lambda_tuned <- tuning_opts$lambda
   }
 
   # ADAPTIVE tuning
@@ -358,8 +354,8 @@ multiness_fit <- function(
       tuning_opts$penalty_const <- 4/sqrt(3)
     }
     # penalty_const_alpha
-    if(is.null(tuning_opts$penalty_const_alpha)){
-      tuning_opts$penalty_const_alpha <- 1
+    if(is.null(tuning_opts$penalty_const_lambda)){
+      tuning_opts$penalty_const_lambda <- 1
     }
 
     # set parameters
@@ -367,8 +363,11 @@ multiness_fit <- function(
     if(!tuning_opts$layer_wise){
       sigma_hat_vec <- rep(mean(sigma_hat_vec),m)
     }
-    lambda_vec_tuned <- tuning_opts$penalty_const*sqrt(n)*sigma_hat_vec
-    alpha_tuned <- tuning_opts$penalty_const_alpha*sqrt(m)
+    # euclidean norm of sigma_hat_vec
+    sigma_hat_en <- sqrt(sum(sigma_hat_vec^2))
+    # final tuning parameters
+    lambda_tuned <- tuning_opts$penalty_const*tuning_opts$penalty_const_lambda*sqrt(n)*sigma_hat_en
+    alpha_vec_tuned <- sigma_hat_vec / (tuning_opts$penalty_const_lambda*sigma_hat_en)
   }
 
   # CROSS-VALIDATION tuning
@@ -386,9 +385,9 @@ multiness_fit <- function(
     if(is.null(tuning_opts$p_cv)){
       tuning_opts$p_cv <- .1
     }
-    # penalty_const_alpha (PWM: no CV implemented for this constant yet)
-    if(is.null(tuning_opts$penalty_const_alpha)){
-      tuning_opts$penalty_const_alpha <- 1
+    # penalty_const_alpha
+    if(is.null(tuning_opts$penalty_const_lambda)){
+      tuning_opts$penalty_const_lambda <- 1
     }
     # penalty_const_vec (range of tuning constants)
     if(is.null(tuning_opts$penalty_const_vec)){
@@ -409,9 +408,12 @@ multiness_fit <- function(
     if(!tuning_opts$layer_wise){
       sigma_hat_vec <- rep(mean(sigma_hat_vec),m)
     }
-    lambda_propto <- sigma_hat_vec*sqrt(n)
+    # euclidean norm of sigma_hat_vec
+    sigma_hat_en <- sqrt(sum(sigma_hat_vec^2))
+    # set lambda up to a constant
+    lambda_propto <- tuning_opts$penalty_const_lambda*sqrt(n)*sigma_hat_en
     # set alpha without tuning
-    alpha_tuned <- tuning_opts$penalty_const_alpha*sqrt(m)
+    alpha_vec_tuned <- sigma_hat_vec / (tuning_opts$penalty_const_lambda*sigma_hat_en)
 
     # edge cross-validation:
     # find the subset of non-zero entries for holdout (if applicable)
@@ -437,7 +439,7 @@ multiness_fit <- function(
         # fit model
         fit_cv <- prox_gd_memeff(A=A,
                                  lambda=lambda_cv_current,
-                                 alpha=alpha_tuned,
+                                 alpha=alpha_vec_tuned,
                                  link=linkl,
                                  eta=optim_opts$eta,
                                  init=optim_opts$init,
@@ -487,14 +489,13 @@ multiness_fit <- function(
     # select constant
     lambda_const_select <- tuning_opts$penalty_const_vec[which.min(Matrix::colMeans(cv_results))]
     # set final tuning parameter(s)
-    lambda_vec_tuned <- lambda_const_select*lambda_propto
-    # PWM: maybe add an option to return CV results in a table
+    lambda_tuned <- lambda_const_select*lambda_propto
   }
 
   # fit the final model (first stage)
   fit <- prox_gd_memeff(A=A,
-                        lambda=lambda_vec_tuned,
-                        alpha=alpha_tuned,
+                        lambda=lambda_tuned,
+                        alpha=alpha_vec_tuned,
                         link=linkl,
                         eta=optim_opts$eta,
                         init=optim_opts$init,
@@ -531,8 +532,8 @@ multiness_fit <- function(
                 d2=refit$G_rank,
                 K=refit$K,
                 convergence=refit$convergence,
-                lambda=lambda_vec_tuned,
-                alpha=alpha_tuned))
+                lambda=lambda_tuned,
+                alpha=alpha_vec_tuned))
   }
   else{
     V_hat <- ase(refit$F_hat,refit$F_rank)
@@ -546,8 +547,8 @@ multiness_fit <- function(
                 d2=refit$G_rank,
                 K=refit$K,
                 convergence=refit$convergence,
-                lambda=lambda_vec_tuned,
-                alpha=alpha_tuned))
+                lambda=lambda_tuned,
+                alpha=alpha_vec_tuned))
   }
 }
 

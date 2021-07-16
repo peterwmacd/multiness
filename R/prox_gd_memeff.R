@@ -15,7 +15,7 @@ prox_gd_memeff <- function(A,lambda,alpha,
   n <- dim(A)[1]
   m <- dim(A)[3]
   # common penalty parameter
-  la <- alpha*sqrt(mean(lambda^2))
+  la <- lambda*alpha
   # precalculate mean of A
   if(is.null(misspattern)){
     A_bar <- apply(A,c(1,2),mean)
@@ -34,11 +34,6 @@ prox_gd_memeff <- function(A,lambda,alpha,
       U_old <- lapply(1:m,function(ii){rank_thresh_f(link[[2]](rank_thresh(A[,,ii]*misspattern[,,ii] - einfo_to_mat(V_old),max_rank,pos,eig_maxitr)),init_rank,pos,eig_maxitr)})
     }
   }
-  # initialize completely at random
-  # if(init=='random'){
-  #   F_old <- list(tcrossprod(matrix(rnorm(n*max_rank),n,max_rank)),max_rank)
-  #   G_old <- lapply(1:m,function(ii){list(tcrossprod(matrix(rnorm(n*max_rank),n,max_rank)),max_rank)})
-  # }
   # initialize at zero
   if(init=='zero'){
     V_old <- list(vals=rep(0,1),vecs=matrix(0,n,1))
@@ -57,24 +52,24 @@ prox_gd_memeff <- function(A,lambda,alpha,
     K_count <- K_count+1
     # update V
     V_new <- V_update_f(V_old,U_old,A_bar,link,
-                      eta_curr,la,
+                      eta_curr,lambda,
                       max_rank,pos,soft,eig_maxitr,hollow,misspattern)
     # use V_old or V_new depending on block updating
     # update U
     if(block){
       U_new <- U_update_f(U_old,V_new,A,link,
-                          eta_curr,lambda,
+                          eta_curr,la,
                           max_rank,pos,soft,eig_maxitr,hollow,misspattern)
     }
     else{
       U_new <- U_update_f(U_old,V_old,A,link,
-                          eta_curr,lambda,
+                          eta_curr,la,
                           max_rank,pos,soft,eig_maxitr,hollow,misspattern)
     }
     # check convergence
     if(check_obj){
       obj_new <- objective_factor(V_new,U_new,
-                                  A,la,lambda,link,
+                                  A,lambda,la,link,
                                   hollow,misspattern,max_rank)
       keep <- (obj_new < obj)
       crit <- (obj - obj_new) / obj_new

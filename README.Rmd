@@ -58,10 +58,10 @@ fit$d2
 
 # plot first two common latent dimensions
 plot(fit$V_hat[,1:2],main="Common latent dimensions",
-     xlab="v1",ylab="v2",xlim=c(0,4))
+     xlab="v1",ylab="v2",xlim=c(0,4.5))
 # label a subset of the points
 countries <- dimnames(A)[[1]]
-do_label <- c(4,5,8,10,11,14,17,19,20,24,25,28,33,34,35,37,39,54,61,75)
+do_label <- c(4,5,8,10,11,14,17,19,20,24,25,28,33,34,35,37,39,41,54,61,75)
 text(fit$V_hat[do_label,1],fit$V_hat[do_label,2],
      labels=countries[do_label],pos=4,cex=.8)
 

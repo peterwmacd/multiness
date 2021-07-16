@@ -4,7 +4,6 @@
 # MultiNeSS
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
 The R package “multiness” implements model fitting and simulation for
@@ -48,17 +47,17 @@ fit <- multiness_fit(A,model="gaussian",self_loops=FALSE,
 # inspect fitted latent space dimensions
 # common latent space
 fit$d1
-#> [1] 23
+#> [1] 30
 # individual latent spaces
 fit$d2
-#>  [1] 3 3 4 1 2 4 3 4 8 7 3 6 3
+#>  [1]  2  4  4  3  4  8  5  5 16 11  4 12  6
 
 # plot first two common latent dimensions
 plot(fit$V_hat[,1:2],main="Common latent dimensions",
-     xlab="v1",ylab="v2",xlim=c(0,4))
+     xlab="v1",ylab="v2",xlim=c(0,4.5))
 # label a subset of the points
 countries <- dimnames(A)[[1]]
-do_label <- c(4,5,8,10,11,14,17,19,20,24,25,28,33,34,35,37,39,54,61,75)
+do_label <- c(4,5,8,10,11,14,17,19,20,24,25,28,33,34,35,37,39,41,54,61,75)
 text(fit$V_hat[do_label,1],fit$V_hat[do_label,2],
      labels=countries[do_label],pos=4,cex=.8)
 ```

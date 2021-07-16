@@ -27,12 +27,12 @@ parameter tuning. The arguments used depends on the choice of tuning method.
 If \code{tuning='fixed'}, \code{multiness_fit} will utilize the following
 arguments:
 \describe{
-\item{alpha}{A positive scalar, the parameter \eqn{\alpha} in the
-nuclear norm penalty, see Details. Defaults to \code{sqrt(m)}}
-\item{lambda}{A positive scalar or numeric vector of length \code{m},
-the \eqn{\lambda_k} parameters in the nuclear norm penalty, see Details.
-If a scalar is provided all \eqn{\lambda_k} parameters are set to that
-value. Defaults to \code{2.309 * sqrt(n)}.}
+\item{lambda}{A positive scalar,
+the \eqn{\lambda} parameter in the nuclear norm penalty, see Details.
+Defaults to \code{2.309 * sqrt(n*m)}.}
+\item{alpha}{A positive scalar or numeric vector of length \code{m}, the parameters \eqn{\alpha_k} in the
+nuclear norm penalty, see Details. If a scalar is provided all \eqn{\lambda_k} parameters are set to that
+value. Defaults to \code{1/sqrt(m)}}
 }
 If \code{tuning='adaptive'}, \code{multiness_fit} will utilize the following
 arguments:
@@ -40,13 +40,11 @@ arguments:
 \item{layer_wise}{A Boolean, if \code{TRUE}, the entry-wise variance
 is estimated individually for each layer. Otherwise the estimates are
 pooled. Defaults to \code{TRUE}.}
-\item{penalty_const}{A positive scalar \eqn{C} which scales the \eqn{\lambda_k}
-penalty parameters (see Details):
-\deqn{\lambda_k = C \hat{\sigma}_k \sqrt n.}
+\item{penalty_const}{A positive scalar \eqn{C} which scales the
+penalty parameters (see Details).
 Defaults to \code{2.309}.}
-\item{penalty_const_alpha}{A positive scalar \eqn{c} which scales the \eqn{\alpha}
-penalty parameter (see Details):
-\deqn{\alpha = c \sqrt m.}
+\item{penalty_const_lambda}{A positive scalar \eqn{c} which scales only the \eqn{\lambda}
+penalty parameter (see Details).
 Defaults to \code{1}.}
 }
 If \code{tuning='cv'}, \code{multiness_fit} will utilize the following
@@ -59,13 +57,11 @@ pooled. Defaults to \code{TRUE}.}
 cross-validation performed for each parameter setting. Defaults to \code{3}.}
 \item{p_cv}{A positive scalar in the interval (0,1), the proportion
 of edge entries held out in edge cross-validation. Defaults to \eqn{0.1}.}
-\item{penalty_const_alpha}{A positive scalar \eqn{c} which scales the \eqn{\alpha}
-penalty parameter (see Details):
-\deqn{\alpha = c \sqrt m.}
+\item{penalty_const_lambda}{A positive scalar \eqn{c} which scales only the \eqn{\lambda}
+penalty parameter (see Details).
 Defaults to \code{1}.}
 \item{penalty_const_vec}{A numeric vector with positive entries, the candidate
-values of constant \eqn{C} to scale the \eqn{\lambda_k} penalty parameters (see Details):
-\deqn{\lambda_k = C \hat{\sigma}_k \sqrt n.}
+values of constant \eqn{C} to scale the penalty parameters (see Details).
 An optimal constant is chosen by edge cross-validation. Defaults to
 \code{c(1,1.5,...,3.5,4)}.}
 \item{refit_cv}{A Boolean, if \code{TRUE}, a refitting step is
@@ -138,9 +134,9 @@ gradient descent.}
 \item{convergence}{An integer convergence code, \code{0} if proximal
 gradient descent converged in fewer than \code{optim_opts$K_max} iterations,
 \code{1} otherwise.}
-\item{lambda}{A numeric vector of length \eqn{m}, the tuned \eqn{\lambda}
-penalty parameters for each layer (see Details).}
-\item{alpha}{A positive scalar, the tuned \eqn{\alpha} penalty parameter
+\item{lambda}{A positive scalar, the tuned \eqn{\lambda}
+penalty parameter (see Details).}
+\item{alpha}{A numeric vector of length \eqn{m}, the tuned \eqn{\alpha} penalty parameters
 (see Details).}
 }
 \description{
@@ -166,7 +162,7 @@ to instead return estimates of latent positions \eqn{V} and \eqn{U_k}
 based on the adjacency spectral embedding (if such a factorization exists).
 
 Tuning parameters \eqn{\alpha} and \eqn{\lambda_k} in the nuclear norm penalty
-\deqn{\alpha ( \sum_k \lambda_k^2)/m ||F||_* + \sum_k \lambda_k ||G_k||_*}
+\deqn{\lambda ||F||_* + \sum_k \lambda \alpha_k ||G_k||_*}
 are either set by the
 user (\code{tuning='fixed'}), selected adaptively using the
 \code{\link[denoiseR:estim_sigma]{denoiseR}}
