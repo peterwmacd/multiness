@@ -12,11 +12,11 @@
 #' Under the Gaussian model, the \eqn{n \times n} adjacency matrix for layer \eqn{k=1,...,m}
 #' has independent Gaussian entries with standard deviation \code{sigma} and
 #' mean given by
-#' \deqn{E(A_k) = VV^{\intercal} + U_kU_k^{\intercal}.}
+#' \deqn{E(A_k) = VV^{T} + U_kU_k^{T}.}
 #'
 #' Under the logistic model, the \eqn{n \times n} adjacency matrix for layer \eqn{k=1,...,m}
 #' has independent Bernoulli entries with mean given by
-#' \deqn{E(A_k) = g(VV^{\intercal} + U_kU_k^{\intercal}),}
+#' \deqn{E(A_k) = g(VV^{T} + U_kU_k^{T}),}
 #' where \eqn{g} denotes the element-wise application of the inverse logistic
 #' link (\code{\link{expit}}) function. Under both models, \code{self_loops} provides
 #' an option to set the diagonal entries of the adjacency matrices to zero.

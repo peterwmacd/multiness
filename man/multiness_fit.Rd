@@ -31,7 +31,7 @@ arguments:
 the \eqn{\lambda} parameter in the nuclear norm penalty, see Details.
 Defaults to \code{2.309 * sqrt(n*m)}.}
 \item{alpha}{A positive scalar or numeric vector of length \code{m}, the parameters \eqn{\alpha_k} in the
-nuclear norm penalty, see Details. If a scalar is provided all \eqn{\lambda_k} parameters are set to that
+nuclear norm penalty, see Details. If a scalar is provided all \eqn{\alpha_k} parameters are set to that
 value. Defaults to \code{1/sqrt(m)}}
 }
 If \code{tuning='adaptive'}, \code{multiness_fit} will utilize the following
@@ -114,10 +114,10 @@ A list is returned with the MultiNeSS model estimates, dimensions of
 the common and individual latent spaces, and some additional optimization
 output:
 \item{F_hat}{An \eqn{n \times n} matrix estimating the common part of the expected
-adjacency matrix, \eqn{F = VV^{\intercal}}. If \code{optim_opts$return_posns}
+adjacency matrix, \eqn{F = VV^{T}}. If \code{optim_opts$return_posns}
 is \code{TRUE}, this is not returned.}
 \item{G_hat}{A list of length \eqn{m}, the collection of \eqn{n \times n} matrices
-estimating the individual part of each adjacency matrix, \eqn{G_k = U_kU_k^{\intercal}}.
+estimating the individual part of each adjacency matrix, \eqn{G_k = U_kU_k^{T}}.
 If \code{optim_opts$return_posns}
 is \code{TRUE}, this is not returned.}
 \item{V_hat}{A matrix estimating the common latent positions.
@@ -147,7 +147,7 @@ with various options for parameter tuning.
 A MultiNeSS model is fit to an \eqn{n \times n \times m} array \eqn{A} of
 symmetric adjacency matrices on a common set of nodes. Fitting
 proceeds by convex proximal gradient descent on the entries of
-\eqn{F = VV^{\intercal}} and \eqn{G_k = U_kU_k^{\intercal}}, see
+\eqn{F = VV^{T}} and \eqn{G_k = U_kU_k^{T}}, see
 \href{https://arxiv.org/abs/2012.14409}{MacDonald et al., (2020)},
 Section 3.2. Additional optional arguments for
 the gradient descent routine can be provided in \code{optim_opts}.
@@ -161,7 +161,7 @@ By default, \code{multiness_fit} will return estimates of the matrices
 to instead return estimates of latent positions \eqn{V} and \eqn{U_k}
 based on the adjacency spectral embedding (if such a factorization exists).
 
-Tuning parameters \eqn{\alpha} and \eqn{\lambda_k} in the nuclear norm penalty
+Tuning parameters \eqn{\lambda} and \eqn{\alpha_k} in the nuclear norm penalty
 \deqn{\lambda ||F||_* + \sum_k \lambda \alpha_k ||G_k||_*}
 are either set by the
 user (\code{tuning='fixed'}), selected adaptively using the
@@ -183,7 +183,7 @@ fit1 <- multiness_fit(A=data1$A,
                       self_loops=TRUE,
                       refit=FALSE,
                       tuning="fixed",
-                      tuning_opts=list(alpha=2,lambda=20),
+                      tuning_opts=list(lambda=40,alpha=1/2),
                       optim_opts=list(max_rank=20,verbose=TRUE))
 
 # multiness_fit with adaptive tuning
