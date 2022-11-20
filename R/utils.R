@@ -102,6 +102,7 @@ sum_einfo_list <- function(lof,link,offset,misspattern=NULL){
 ase <- function(M,d){
   if(d==0){
     X.hat <- matrix(0,nrow(M),1)
+    attr(X.hat,'signs') <- 0
   }
   else{
     temp <- RSpectra::eigs_sym(M,d,which="LM")
@@ -112,8 +113,8 @@ ase <- function(M,d){
     else{
       X.hat <- temp$vectors[,perm]*sqrt(abs(temp$values[perm]))
     }
+    attr(X.hat,'signs') <- sign(temp$values[perm])
   }
-  attr(X.hat,'signs') <- sign(temp$values[perm])
   return(X.hat)
 }
 
