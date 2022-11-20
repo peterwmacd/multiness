@@ -123,3 +123,25 @@ ase <- function(M,d){
 nuclear <- function(M,max_rank){
   suppressWarnings(sum(abs(RSpectra::svds(M,min(max_rank,nrow(M)))$d)))
 }
+
+# robust noise estimation for a low-rank matrix with the MAD estimator
+# of Gavish and Donoho
+# This is a simpler adaptation of the function denoiseR::estim_sigma
+# as that package has non-trivial dependencies, and
+# its maintenance status is unclear
+estim_sigma_mad <- function(M){
+  # center columns
+  Mc <- scale(M, scale = F)
+  # dimensions
+  n = nrow(Mc)
+  p = ncol(Mc)
+  # auxiliary quantities
+  beta <- min(n, p)/max(n, p)
+  lambdastar <- sqrt(2 * (beta + 1) + 8 * beta/((beta +
+                                                   1 + (sqrt(beta^2 + 14 * beta + 1)))))
+  wbstar <- 0.56 * beta^3 - 0.95 * beta^2 + 1.82 * beta +
+    1.43
+  # sigma estimate
+  sigma <- median(svd(Mc)$d)/(sqrt(max(n, p)) * (lambdastar/wbstar))
+  return(sigma)
+}
