@@ -11,7 +11,7 @@ Gaussian and logistic inner product MultiNeSS models for multiplex
 networks. The package uses a convex fitting algorithm with fully
 adaptive parameter tuning, including options for edge cross-validation.
 For more details see [MacDonald et al.,
-(2020)](https://arxiv.org/abs/2012.14409).
+(2020)](https://arxiv.org/abs/2012.14409/).
 
 ## Installation
 
@@ -25,7 +25,7 @@ devtools::install_github("peterwmacd/multiness")
 
 “multiness” includes an example multiplex network of agricultural trade
 which is studied in [MacDonald et al.,
-(2020)](https://arxiv.org/abs/2012.14409). It is easy to import and to
+(2020)](https://arxiv.org/abs/2012.14409/). It is easy to import and to
 fit a Gaussian MultiNeSS model with adaptive tuning.
 
 ``` r
