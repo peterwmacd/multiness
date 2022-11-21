@@ -1,6 +1,6 @@
 Package: multiness
 Title: MULTIplex NEtworks with Shared Structure
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: 
     person(given = "Peter W.",
            family = "MacDonald",
@@ -23,5 +23,5 @@ Imports:
     RSpectra (>= 0.16.0),
 Depends:
     R (>= 3.6.0)
-URL: https://github.com/peterwmacd/multiness
-BugReports: https://github.com/peterwmacd/multiness/issues
+URL: https://github.com/peterwmacd/multiness/
+BugReports: https://github.com/peterwmacd/multiness/issues/
