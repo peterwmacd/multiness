@@ -1,6 +1,6 @@
 Package: multiness
 Title: MULTIplex NEtworks with Shared Structure
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     person(given = "Peter W.",
            family = "MacDonald",
@@ -12,7 +12,7 @@ Description: Model fitting and simulation for Gaussian and logistic inner
     a convex fitting algorithm with fully adaptive parameter tuning, 
     including options for edge cross-validation. For more details see 
     MacDonald et al. (2020).  
-License: MIT + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

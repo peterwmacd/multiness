@@ -164,9 +164,9 @@ based on the adjacency spectral embedding (if such a factorization exists).
 Tuning parameters \eqn{\lambda} and \eqn{\alpha_k} in the nuclear norm penalty
 \deqn{\lambda ||F||_* + \sum_k \lambda \alpha_k ||G_k||_*}
 are either set by the
-user (\code{tuning='fixed'}), selected adaptively using the
-\code{\link[denoiseR:estim_sigma]{denoiseR}}
-package to estimate entry-wise variance (\code{tuning='adaptive'}), or
+user (\code{tuning='fixed'}), selected adaptively using a
+robust estimator of the
+entry-wise variance (\code{tuning='adaptive'}), or
 selected using edge cross-validation (\code{tuning='cv'}). For more details
 see \href{https://arxiv.org/abs/2012.14409}{MacDonald et al., (2020)},
 Section 3.4. Additional optional arguments for parameter tuning
