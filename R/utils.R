@@ -142,7 +142,7 @@ estim_sigma_mad <- function(M){
   wbstar <- 0.56 * beta^3 - 0.95 * beta^2 + 1.82 * beta +
     1.43
   # sigma estimate
-  sigma <- median(svd(Mc)$d)/(sqrt(max(n, p)) * (lambdastar/wbstar))
+  sigma <- stats::median(svd(Mc)$d)/(sqrt(max(n, p)) * (lambdastar/wbstar))
   return(sigma)
 }
 
@@ -150,7 +150,7 @@ estim_sigma_mad <- function(M){
 # This is a simpler adaptation of the function rstiefel::rustiefel
 # as the maintenance status of that package is unclear
 rand_orth <- function(n,m){
-  M <- matrix(rnorm(n*m),n,m)
+  M <- matrix(stats::rnorm(n*m),n,m)
   temp <- svd(M)
   tcrossprod(temp$u,temp$v)
 }
