@@ -1,7 +1,11 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Corrected all URLs with https and trailing slashes.
+* Removed one URL trailing slash in the README file.
+
+In a previous resubmission I have:
+
+* Corrected URLs with https and added some trailing slashes.
 
 * Removed one broken link.
 

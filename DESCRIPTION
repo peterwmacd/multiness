@@ -1,6 +1,6 @@
 Package: multiness
 Title: MULTIplex NEtworks with Shared Structure
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: 
     person(given = "Peter W.",
            family = "MacDonald",
