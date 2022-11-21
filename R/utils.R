@@ -145,3 +145,15 @@ estim_sigma_mad <- function(M){
   sigma <- median(svd(Mc)$d)/(sqrt(max(n, p)) * (lambdastar/wbstar))
   return(sigma)
 }
+
+# generate a random uniform n x m orthogonal matrix
+# This is a simpler adaptation of the function rstiefel::rustiefel
+# as the maintenance status of that package is unclear
+rand_orth <- function(n,m){
+  M <- matrix(rnorm(n*m),n,m)
+  temp <- svd(M)
+  tcrossprod(temp$u,temp$v)
+}
+
+
+

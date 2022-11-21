@@ -18,7 +18,7 @@ noisy_sequence_logit <- function(n,m,d1,d2,
     U <- array(NA,dim(W))
     for(ii in 1:m){
       if(d1 > 0){
-        B <- t(rstiefel::rustiefel(d1,min(d1,d2)))
+        B <- t(rand_orth(d1,min(d1,d2)))
         w_scale <- rep(sqrt(1-rho^2),min(d1,d2))
         if(d2>d1){
           B <- rbind(B,matrix(0,d2-d1,d1))
