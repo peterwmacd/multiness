@@ -1,7 +1,7 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Removed one URL trailing slash in the README file.
+* Removed a URL trailing slash in documentation.
 
 In a previous resubmission I have:
 
