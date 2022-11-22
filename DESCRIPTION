@@ -1,6 +1,6 @@
 Package: multiness
 Title: MULTIplex NEtworks with Shared Structure
-Version: 1.0.2
+Version: 1.0.2.9000
 Authors@R: 
     person(given = "Peter W.",
            family = "MacDonald",
@@ -11,7 +11,7 @@ Description: Model fitting and simulation for Gaussian and logistic inner
     product MultiNeSS models for multiplex networks. The package implements 
     a convex fitting algorithm with fully adaptive parameter tuning, 
     including options for edge cross-validation. For more details see 
-    MacDonald et al. (2020).  
+    MacDonald et al., (2022) <https://doi.org/10.1093/biomet/asab058>.  
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

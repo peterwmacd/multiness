@@ -148,13 +148,13 @@ A MultiNeSS model is fit to an \eqn{n \times n \times m} array \eqn{A} of
 symmetric adjacency matrices on a common set of nodes. Fitting
 proceeds by convex proximal gradient descent on the entries of
 \eqn{F = VV^{T}} and \eqn{G_k = U_kU_k^{T}}, see
-\href{https://arxiv.org/abs/2012.14409}{MacDonald et al., (2020)},
+\href{https://doi.org/10.1093/biomet/asab058}{MacDonald et al., (2022)},
 Section 3.2. Additional optional arguments for
 the gradient descent routine can be provided in \code{optim_opts}.
 \code{refit} provides an option
 to perform an additional refitting step to debias the eigenvalues
 of the estimates, see
-\href{https://arxiv.org/abs/2012.14409}{MacDonald et al., (2020)}, Section 3.3.
+\href{https://doi.org/10.1093/biomet/asab058}{MacDonald et al., (2022)}, Section 3.3.
 
 By default, \code{multiness_fit} will return estimates of the matrices
 \eqn{F} and \eqn{G_k}. \code{optim_opts$return_posns} provides an option
@@ -168,7 +168,7 @@ user (\code{tuning='fixed'}), selected adaptively using a
 robust estimator of the
 entry-wise variance (\code{tuning='adaptive'}), or
 selected using edge cross-validation (\code{tuning='cv'}). For more details
-see \href{https://arxiv.org/abs/2012.14409}{MacDonald et al., (2020)},
+see \href{https://doi.org/10.1093/biomet/asab058}{MacDonald et al., (2022)},
 Section 3.4. Additional optional arguments for parameter tuning
 can be provided in \code{tuning_opts}.
 }
