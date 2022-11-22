@@ -25,6 +25,13 @@ including options for edge cross-validation. For more details see [MacDonald et 
     
 ## Installation
 
+You can install "multiness" version 1.0.1 from CRAN using
+
+``` r
+install.packages("multiness")
+```
+
+
 You can install the development version of "multiness" from GitHub using
 
 ``` r
