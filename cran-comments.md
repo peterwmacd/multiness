@@ -1,5 +1,5 @@
 ## Resubmission
-This is a resubmission (1.0.2, not yet accepted) In this version I have:
+This is a resubmission (1.0.2) In this version I have:
 
 * Removed a URL trailing slash in documentation
 

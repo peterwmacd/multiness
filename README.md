@@ -15,7 +15,7 @@ For more details see [MacDonald et al.,
 
 ## Installation
 
-You can install “multiness” version 1.0.1 from CRAN using
+You can install “multiness” version 1.0.2 from CRAN using
 
 ``` r
 install.packages("multiness")

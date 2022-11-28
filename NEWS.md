@@ -4,6 +4,8 @@
 
 * updated arxiv paper links to Biometrika doi
 
+# multiness 1.0.2
+
 * removed trailing slashes in URLs
 
 # multiness 1.0.1
