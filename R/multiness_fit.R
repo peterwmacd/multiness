@@ -65,8 +65,8 @@
 #'     \item{penalty_const}{A positive scalar \eqn{C} which scales the
 #'     penalty parameters (see Details).
 #'     Defaults to \code{2.309}.}
-#'     \item{penalty_const_lambda}{A positive scalar \eqn{c} which scales only the \eqn{\lambda}
-#'     penalty parameter (see Details).
+#'     \item{penalty_const_common}{A positive scalar \eqn{c} which scales only the penalty on the
+#'     common structure (see Details).
 #'     Defaults to \code{1}.}
 #' }
 #' If \code{tuning='cv'}, \code{multiness_fit} will utilize the following
@@ -79,8 +79,8 @@
 #'     cross-validation performed for each parameter setting. Defaults to \code{3}.}
 #'     \item{p_cv}{A positive scalar in the interval (0,1), the proportion
 #'     of edge entries held out in edge cross-validation. Defaults to \eqn{0.1}.}
-#'     \item{penalty_const_lambda}{A positive scalar \eqn{c} which scales only the \eqn{\lambda}
-#'     penalty parameter (see Details).
+#'     \item{penalty_const_common}{A positive scalar \eqn{c} which scales only the penalty on the
+#'     common structure (see Details).
 #'     Defaults to \code{1}.}
 #'     \item{penalty_const_vec}{A numeric vector with positive entries, the candidate
 #'     values of constant \eqn{C} to scale the penalty parameters (see Details).
@@ -354,8 +354,8 @@ multiness_fit <- function(
       tuning_opts$penalty_const <- 4/sqrt(3)
     }
     # penalty_const_alpha
-    if(is.null(tuning_opts$penalty_const_lambda)){
-      tuning_opts$penalty_const_lambda <- 1
+    if(is.null(tuning_opts$penalty_const_common)){
+      tuning_opts$penalty_const_common <- 1
     }
 
     # set parameters
@@ -366,8 +366,8 @@ multiness_fit <- function(
     # euclidean norm of sigma_hat_vec
     sigma_hat_en <- sqrt(sum(sigma_hat_vec^2))
     # final tuning parameters
-    lambda_tuned <- tuning_opts$penalty_const*tuning_opts$penalty_const_lambda*sqrt(n)*sigma_hat_en
-    alpha_vec_tuned <- sigma_hat_vec / (tuning_opts$penalty_const_lambda*sigma_hat_en)
+    lambda_tuned <- tuning_opts$penalty_const*tuning_opts$penalty_const_common*sqrt(n)*sigma_hat_en
+    alpha_vec_tuned <- sigma_hat_vec / (tuning_opts$penalty_const_common*sigma_hat_en)
   }
 
   # CROSS-VALIDATION tuning
@@ -386,8 +386,8 @@ multiness_fit <- function(
       tuning_opts$p_cv <- .1
     }
     # penalty_const_alpha
-    if(is.null(tuning_opts$penalty_const_lambda)){
-      tuning_opts$penalty_const_lambda <- 1
+    if(is.null(tuning_opts$penalty_const_common)){
+      tuning_opts$penalty_const_common <- 1
     }
     # penalty_const_vec (range of tuning constants)
     if(is.null(tuning_opts$penalty_const_vec)){
@@ -411,9 +411,9 @@ multiness_fit <- function(
     # euclidean norm of sigma_hat_vec
     sigma_hat_en <- sqrt(sum(sigma_hat_vec^2))
     # set lambda up to a constant
-    lambda_propto <- tuning_opts$penalty_const_lambda*sqrt(n)*sigma_hat_en
+    lambda_propto <- tuning_opts$penalty_const_common*sqrt(n)*sigma_hat_en
     # set alpha without tuning
-    alpha_vec_tuned <- sigma_hat_vec / (tuning_opts$penalty_const_lambda*sigma_hat_en)
+    alpha_vec_tuned <- sigma_hat_vec / (tuning_opts$penalty_const_common*sigma_hat_en)
 
     # edge cross-validation:
     # find the subset of non-zero entries for holdout (if applicable)

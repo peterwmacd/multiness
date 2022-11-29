@@ -43,8 +43,8 @@ pooled. Defaults to \code{TRUE}.}
 \item{penalty_const}{A positive scalar \eqn{C} which scales the
 penalty parameters (see Details).
 Defaults to \code{2.309}.}
-\item{penalty_const_lambda}{A positive scalar \eqn{c} which scales only the \eqn{\lambda}
-penalty parameter (see Details).
+\item{penalty_const_common}{A positive scalar \eqn{c} which scales only the penalty on the
+common structure (see Details).
 Defaults to \code{1}.}
 }
 If \code{tuning='cv'}, \code{multiness_fit} will utilize the following
@@ -57,8 +57,8 @@ pooled. Defaults to \code{TRUE}.}
 cross-validation performed for each parameter setting. Defaults to \code{3}.}
 \item{p_cv}{A positive scalar in the interval (0,1), the proportion
 of edge entries held out in edge cross-validation. Defaults to \eqn{0.1}.}
-\item{penalty_const_lambda}{A positive scalar \eqn{c} which scales only the \eqn{\lambda}
-penalty parameter (see Details).
+\item{penalty_const_common}{A positive scalar \eqn{c} which scales only the penalty on the
+common structure (see Details).
 Defaults to \code{1}.}
 \item{penalty_const_vec}{A numeric vector with positive entries, the candidate
 values of constant \eqn{C} to scale the penalty parameters (see Details).
